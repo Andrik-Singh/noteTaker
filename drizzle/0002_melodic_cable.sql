@@ -1,0 +1,1 @@
+ALTER TABLE "NoteTablle" ALTER COLUMN "id" SET DATA TYPE uuid;
