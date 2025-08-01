@@ -1,10 +1,13 @@
+
+import Input from "@/components/search"
+import SortableNoteList from "@/components/SortableNotes"
 import { Button } from "@/components/ui/button"
-import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { getNotes } from "@/lib/actions/notes"
-import { Note } from "@/lib/constants"
 import Link from "next/link"
 export const revalidate = 0 // Revalidate every 0 seconds
-const page = async () => {
+const page = async ({ searchParams }: { searchParams: { query: string } }) => {
+    const query =await searchParams.query || ''
+
     async function fetchNotes() {
         try {
             const response = await getNotes()
@@ -15,46 +18,36 @@ const page = async () => {
         }
     }
     const data = await fetchNotes()
-    const notes = data?.data
-    console.log(notes)
+    let notes
+    const unfilteredNotes = data?.data
+    if (query) {
+        console.log(unfilteredNotes)
+        notes=unfilteredNotes.filter((note)=>{
+            if(note.title.includes(query) || note.subtitle.includes(query) || note.tags.includes(query) ){
+                return false
+            }
+        })
+    }
+    else   notes=unfilteredNotes
     if (notes.length === 0) {
         return (
             <div className="flex items-center flex-col gap-4">
-                <p>No Notes found</p>
+                <Input></Input>
+                <p>{query ? "Searched note is not there" : "No notes found"}</p>
                 <Button>
                     <Link href={"/notes/new"}>
                         Create new notes
                     </Link>
                 </Button>
+
             </div>
         )
     }
     return (
-        <div className="grid grid-cols-3 gap-5">
-            {notes.map((note: Note) => (
-                <Card key={note?.id}>
-                    <CardHeader>
-                        <CardTitle className="text-3xl">{note?.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <CardTitle className="font-semibold">{note?.subtitle}</CardTitle>
-                        <CardDescription>{note?.description}</CardDescription>
-                    </CardContent>
-                    <CardFooter>
-                        {note?.tags}
-                        <div>
-                            <CardAction>
-                                <Button>
-                                    <Link href={`/notes/${note?.id}/edit`}>
-                                        Edit
-                                    </Link>
-                                </Button>
-                            </CardAction>
-                        </div>
-                    </CardFooter>
-
-                </Card>
-            ))}
+        <div className="px-6 py-8">
+            <h1 className="text-4xl font-bold mb-8 text-center">My Notes</h1>
+            <Input></Input>
+            <SortableNoteList notes={notes} />
         </div>
     )
 }

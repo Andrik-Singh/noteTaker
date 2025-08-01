@@ -1,43 +1,32 @@
 
-import { db } from "@/db";
-import { NoteTable } from "@/db/schema";
-import { auth } from "@/lib/auth";
+import { editNotes } from "@/lib/actions/notes";
 import { notesSchema } from "@/zodSchema/notes";
-import { eq } from "drizzle-orm";
-import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function PATCH(req: NextRequest, params: { id: string }) {
-    const { id } =  params
+export async function PATCH(req: NextRequest, params: { params: Promise<{ id: string }> }) {
+    const { id } = await params.params;
     console.log(id)
     const body = await req.json()
-    const {data,success} =notesSchema.safeParse(body)
+    const { data, success } = notesSchema.safeParse(body)
+    console.log(data)
     try {
-        const h = await headers()
-        const sessionResult = await auth.api.getSession({
-            headers: h
-        })
-        if (!sessionResult || !sessionResult.session || !success) {
-            return ({
-                error: "Unauthorized",
-                success: false
-            })
+        if (!success) {
+            return NextResponse.json({
+                success: false,
+                error: "Invalid data"
+            }, { status: 400 })
         }
-        const { session, user } = sessionResult
-        const returningData = await db.update(NoteTable).set(
-            {
-                title: data?.title,
-                subtitle: data?.subtitle,
-                description: data?.description,
-                tags: data?.tags
-            }
-        ).where(
-            eq(NoteTable.id, id)
-        ).returning()
-        
+        const returnedData = await editNotes({
+            id: id,
+            title: data.title,
+            subtitle: data.subtitle !== undefined ? data.subtitle : null,
+            description: data.description,
+            tags: data.tags
+        })
         return NextResponse.json({
+            error: "none",
             success: true,
-            data: returningData[0]
+            data: returnedData?.data
         })
     }
     catch (error) {

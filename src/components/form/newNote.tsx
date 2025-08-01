@@ -2,7 +2,7 @@
 import { notesSchema, newnotesSchema } from "@/zodSchema/notes"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { Card, CardContent, CardDescription, CardFooter } from "../ui/card"
+import { Card, CardContent, CardFooter } from "../ui/card"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
 import { Textarea } from "../ui/textarea"
@@ -26,7 +26,7 @@ const NewNote = ({ event }: { event?: Note }) => {
     try {
       const body = await axios.post('/api/notes/newNotes', value)
       console.log(body)
-      if (body?.success) {
+      if (body?.data?.success) {
         router.push("/notes")
       }
     } catch (error) {
@@ -36,8 +36,8 @@ const NewNote = ({ event }: { event?: Note }) => {
   const editEvents = async (value: newnotesSchema) => {
     try {
       const body = await axios.patch(`/api/notes/${event?.id}/edit`, value)
-      console.log(body)
-      if (body?.success) {
+
+      if (body?.data?.success) {
         router.push("/notes")
       }
     } catch (error) {
@@ -46,27 +46,31 @@ const NewNote = ({ event }: { event?: Note }) => {
   }
   return (
     <div>
-      <form onSubmit={event ? handleSubmit(editEvents) : handleSubmit(newNotes)}>
-        <Card className="xl:w-1/3 sm:w-2/3 w-screen mx-5 sm:mx-auto my-5">
+      <Card className="xl:w-1/3 sm:w-2/3 w-screen mx-5 sm:mx-auto my-5">
+        <form onSubmit={event ? handleSubmit(editEvents) : handleSubmit(newNotes)}>
           <CardContent>
-            <CardDescription >
+            <div >
               <Label className="my-2" htmlFor="title">Title</Label>
               <Input id="title" {...register("title")} placeholder="Title of your note"></Input>
-            </CardDescription>
-            <CardDescription >
+              {errors.title && <p className="text-red-500">{errors.title.message}</p>}
+            </div>
+            <div >
               <Label className="my-2" htmlFor="subtitle">SubTitle</Label>
               <Input id="subtitle" {...register("subtitle")} placeholder="SubTitle of your note"></Input>
-            </CardDescription>
-            <CardDescription >
+              {errors.subtitle && <p className="text-red-500">{errors.subtitle.message}</p>}
+            </div>
+            <div >
               <Label className="my-2" htmlFor="description">Description</Label>
               <Textarea id="description" {...register("description")} placeholder="Description of your note"></Textarea>
-            </CardDescription>
-            <CardDescription >
+              {errors.description && <p className="text-red-500">{errors.description.message}</p>}
+            </div>
+            <div >
               <Label className="my-2" htmlFor="tags">Tags</Label>
               <Input id="tags" {...register("tags")} placeholder="Tags for your note"></Input>
-            </CardDescription>
+              {errors.tags && <p className="text-red-500">{errors.tags.message}</p>}
+            </div>
           </CardContent>
-          <CardFooter className="flex ml-auto gap-5">
+          <CardFooter className="flex  w-full gap-5 mt-3">
             {event ?
               <Button>
                 {isSubmitting ? "Submitting....." : "Edit note"}
@@ -75,13 +79,13 @@ const NewNote = ({ event }: { event?: Note }) => {
                 {isSubmitting ? "Submitting....." : "Create new note"}
               </Button>
             }
-            <Button type="reset">
+            <Button type="reset" variant={"destructive"}>
               Reset
             </Button>
           </CardFooter>
-        </Card>
+        </form>
+      </Card>
 
-      </form>
     </div>
   )
 }
