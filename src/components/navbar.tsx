@@ -11,7 +11,6 @@ export default async function Navbar() {
     const session = await auth.api.getSession({
         headers: h
     });
-    console.log(session)
     return (
         <header className="flex items-center justify-between px-10 py-5 border-b-2 border-b-gray-500 dark:border-b-gray-700">
             <nav>

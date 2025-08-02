@@ -1,10 +1,10 @@
 'use client'
 import ReactMarkDown from "react-markdown" 
-import { parseMarkdown } from '@/lib/formatter'
+import remarkGfm from "remark-gfm"
 const SanitizedDescription = ({ description }: { description: string }) => {
   return (
     <div>
-        <ReactMarkDown>
+        <ReactMarkDown remarkPlugins={[remarkGfm]}>
             {description}
         </ReactMarkDown>
     </div>

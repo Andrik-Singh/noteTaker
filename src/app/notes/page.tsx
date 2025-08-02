@@ -6,7 +6,7 @@ import { getNotes } from "@/lib/actions/notes"
 import Link from "next/link"
 export const revalidate = 0 // Revalidate every 0 seconds
 const page = async ({ searchParams }: { searchParams: { query: string } }) => {
-    const query =await searchParams.query || ''
+    const query = await searchParams.query || ''
 
     async function fetchNotes() {
         try {
@@ -15,20 +15,34 @@ const page = async ({ searchParams }: { searchParams: { query: string } }) => {
             return data
         } catch (error) {
             console.log(error)
+            return error
         }
     }
     const data = await fetchNotes()
+    if(data?.error && data?.error != "none"){
+        return (
+            <div className="flex items-center flex-col gap-4">
+                <Input></Input>
+                <p>Error fetching notes: {data.error}</p>
+                <Button>
+                    <Link href={"/notes/new"}>
+                        Create new notes
+                    </Link>
+                </Button>
+            </div>
+        )
+    }
     let notes
     const unfilteredNotes = data?.data
     if (query) {
         console.log(unfilteredNotes)
-        notes=unfilteredNotes.filter((note)=>{
-            if(note.title.includes(query) || note.subtitle.includes(query) || note.tags.includes(query) ){
+        notes = unfilteredNotes.filter((note) => {
+            if (note.title.includes(query) || note.subtitle.includes(query) || note.tags.includes(query)) {
                 return false
             }
         })
     }
-    else   notes=unfilteredNotes
+    else notes = unfilteredNotes || []
     if (notes.length === 0) {
         return (
             <div className="flex items-center flex-col gap-4">

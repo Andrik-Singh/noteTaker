@@ -46,7 +46,7 @@ const NewNote = ({ event }: { event?: Note }) => {
   }
   return (
     <div>
-      <Card className="xl:w-1/3 sm:w-2/3 w-screen mx-5 sm:mx-auto my-5">
+      <Card className="sm:w-[540px] w-screen mx-5 sm:mx-auto my-5">
         <form onSubmit={event ? handleSubmit(editEvents) : handleSubmit(newNotes)}>
           <CardContent>
             <div >
