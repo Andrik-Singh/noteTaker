@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation"
 
 const NewNote = ({ event }: { event?: Note }) => {
   const router = useRouter()
-  const { register, formState: { errors, isSubmitting }, handleSubmit, setError } = useForm<newnotesSchema>({
+  const { register, formState: { errors, isSubmitting }, handleSubmit } = useForm<newnotesSchema>({
     resolver: zodResolver(notesSchema),
     defaultValues: {
       title: event?.title ?? undefined,

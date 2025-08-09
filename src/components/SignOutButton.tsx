@@ -15,8 +15,8 @@ const SignOutButton = () => {
                     }
                 }
             })
-        } catch (error) {
-            
+        } catch (_error) {
+            console.log(_error)
         }
     }
     return (

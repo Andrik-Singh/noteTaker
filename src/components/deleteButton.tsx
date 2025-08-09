@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import axios from "axios"
-import { Delete, Loader, Trash } from "lucide-react"
+import {  Loader, Trash } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useTransition } from "react"
 

@@ -7,7 +7,7 @@ export default function Input() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [input, setInput] = useState(searchParams.get('query'))
-  const [submitting,setIsSubmitting] =useState(false)
+  const [_submitting,setIsSubmitting] =useState(false)
   useEffect(() => {
     const existingQuery = searchParams.get('query') || ''
     setInput(existingQuery)

@@ -17,7 +17,7 @@ const SignUpForm = () => {
   })
   const onSubmit = async (value: SignUpType) => {
     try {
-      const { data, error } = await authClient.signUp.email({
+      const {  error } = await authClient.signUp.email({
         email: value.email,
         password: value.password,
         name: value.name,
@@ -28,7 +28,7 @@ const SignUpForm = () => {
         callbackURL: "/", // The redirect URL after verification
       });
       if (error) {
-        throw new Error(error)
+        throw new Error(error?.message)
       }
       if(!error){
         router.push("/notes")

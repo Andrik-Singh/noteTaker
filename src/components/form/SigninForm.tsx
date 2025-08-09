@@ -8,13 +8,14 @@ import { Input } from "../ui/input"
 import { Label } from "../ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import Link from "next/link"
-import { authClient } from "@/lib/auth-client"
 import { useRouter } from "next/navigation"
 import { createAuthClient } from "better-auth/react"
+import { useState } from "react"
 
 const SigninForm = () => {
   const router = useRouter()
-  const { register, handleSubmit, reset, setError, formState: { errors, isSubmitting } } = useForm<SigninSchema>({
+  const [authError, setAuthError] = useState<string | null>(null)
+  const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm<SigninSchema>({
     resolver: zodResolver(signinSchema)
   })
   const authClient = createAuthClient()
@@ -22,9 +23,10 @@ const SigninForm = () => {
     const data = await authClient.signIn.social({
       provider: "github"
     })
+    console.log(data)
   }
   const onSubmit = async (value: SigninSchema) => {
-    const { data, error } = await authClient.signIn.email({
+    const {  error } = await authClient.signIn.email({
       email: value?.email,// required
       password: value?.password, // required
       rememberMe: true,
@@ -41,6 +43,7 @@ const SigninForm = () => {
     });
     if (error) {
       console.log(error)
+      setAuthError(error.message || "An error occurred during sign in")
     }
     if (!error) {
       router.push("/notes")
@@ -48,7 +51,13 @@ const SigninForm = () => {
   }
   return (
     <div className={"flex flex-col gap-6 w-screen mt-5 items-center justify-center "}>
+     
       <Card className="xl:w-[520px] md:w-[480px] w-[360px] shadow-sm shadow-blue-600">
+         {authError &&
+        <div className="text-red-500 text-center">
+          {authError}
+        </div>
+      }
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome back</CardTitle>
           <CardDescription>Login to your account</CardDescription>

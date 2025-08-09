@@ -32,7 +32,7 @@ export async function PATCH(req: NextRequest, params: { params: Promise<{ id: st
     catch (error) {
         return NextResponse.json({
             success: false,
-            error: error?.message
+            error: (error as Error)?.message
         })
     }
 }

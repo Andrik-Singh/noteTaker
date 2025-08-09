@@ -125,9 +125,9 @@ export default function SortableNoteList({ notes: initialNotes }: SortableNoteLi
     })
   )
 
-  const handleDragEnd = useCallback((event: any) => {
+  const handleDragEnd = useCallback((event: import('@dnd-kit/core').DragEndEvent) => {
     const { active, over } = event
-    if (active.id !== over.id) {
+    if (over && active.id !== over.id) {
       setNotes((notes) => {
         const oldIndex = notes.findIndex((n) => n.id === active.id)
         const newIndex = notes.findIndex((n) => n.id === over.id)

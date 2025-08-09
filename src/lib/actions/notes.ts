@@ -7,9 +7,6 @@ import { db } from "@/db"
 import { eq } from "drizzle-orm"
 import { newnotesSchema, notesSchema } from "@/zodSchema/notes"
 import { v4 as uuidv4 } from "uuid"
-import { Note } from "../constants"
-import { error } from "console"
-import { success } from "better-auth"
 
 export async function getNotes() {
     const h = await headers()
@@ -58,9 +55,9 @@ export async function createNewNote(value: newnotesSchema) {
             error: "none",
             success: true
         })
-    } catch (error) {
+    } catch (error:unknown) {
         return ({
-            error: error.message,
+            error: (error as Error).message,
             success: false
         })
     }
@@ -74,7 +71,7 @@ export async function editNotes(notes: {
 }) {
     try {
         const h = await headers()
-        const { session, user } = await auth.api.getSession({
+        const { session } = await auth.api.getSession({
             headers: h
         })
         if (!session) {
@@ -99,9 +96,9 @@ export async function editNotes(notes: {
             success: true,
             data: existingNote
         })
-    } catch (error) {
+    } catch (error:unknown) {
         return ({
-            error: error.message,
+            error: (error as Error).message,
             success: false
         })
     }
@@ -139,7 +136,7 @@ export async function deleteNote(id: string) {
         }
     } catch (error) {
         return {
-            error: error.message || "Internal Server Error",
+            error: (error as Error).message || "Internal Server Error",
             success: false
         }
     }

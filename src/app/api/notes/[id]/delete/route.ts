@@ -18,7 +18,7 @@ export async function DELETE(req: NextRequest, params: { params: Promise<{ id: s
         })
     } catch (error) {
         return NextResponse.json({
-            error: error?.message || "Internal Sever error occured",
+            error: (error as Error)?.message || "Internal Sever error occured",
             success: false
         })
     }
